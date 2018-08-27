@@ -32,10 +32,6 @@ class App extends Component {
     this.edit = this.edit.bind(this);
   }
 
-  derp() {
-    return this.state;
-  }
-
   create() {
     // Format task
     const newTask = TasksHelper.newTask(

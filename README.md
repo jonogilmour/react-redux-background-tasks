@@ -18,7 +18,7 @@ This library simplifies that process and allows any Redux-connected component to
 
 ## Requirements
 
-Relies on **Redux**, and the **React Context API**, so React v16+ is required.
+Relies on **Redux**, **redux-thunk**, and the **React Context API**, so React v16+ is required.
 
 ## Functionality
 
@@ -273,4 +273,16 @@ Should be dispatched to indicate an deleted task has been consumed, ie when it h
 import { processDeleted } from 'react-redux-background-tasks'
 
 dispatch( processDeleted(justCancelledTaskId) );
+```
+
+#### Redux Reducer
+
+A single reducer is provided that processes all the above actions.
+
+```javascript
+import { taskReducer } from 'react-redux-background-tasks'
+
+const rootReducer = combineReducers({
+  taskQueues: taskReducer
+});
 ```
