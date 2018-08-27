@@ -19,7 +19,8 @@ class App extends Component {
         updateTasks: updateTasks.bind(this),
         getTasks: getTasks.bind(this)
       },
-      myTaskId: false
+      myTaskId: false,
+      testFeedback: 0
     };
 
     this.create = this.create.bind(this);
@@ -34,7 +35,9 @@ class App extends Component {
   create() {
     // Format task
     const newTask = TasksHelper.newTask(
-      () => true, // Callback
+      () => this.setState(prevState => ({
+        testFeedback: prevState.testFeedback + 1
+      })), // Callback
       1000, // Interval
       false // Start on load?
     );
@@ -74,7 +77,9 @@ class App extends Component {
   edit() {
     // format new task with edits
     const newTask = TasksHelper.newTask(
-      () => true, // Callback
+      () => this.setState(prevState => ({
+        testFeedback: prevState.testFeedback + 7
+      })), // Callback
       2000, // Interval
       true, // Start on load?
       this.state.myTaskId // Manually set id

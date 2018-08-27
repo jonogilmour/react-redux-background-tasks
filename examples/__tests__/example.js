@@ -16,6 +16,8 @@ import TaskContext from '../../context/TaskContext';
 import TaskCreator from '../../context/TaskCreator';
 import TaskRunner from '../../components/TaskRunner';
 
+jest.useFakeTimers();
+
 describe('Task workflow', () => {
 
   // Lets us spy on dispatch calls to the redux store
@@ -70,6 +72,16 @@ describe('Task workflow', () => {
       });
     });
 
+    it(`should call setInterval on the new task`, () => {
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(0);
+      app.find("div.create-task button").simulate('click');
+
+      jest.advanceTimersByTime(1000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(1);
+      jest.advanceTimersByTime(1000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(2);
+    });
+
   });
 
   describe('Task edit', () => {
@@ -103,6 +115,26 @@ describe('Task workflow', () => {
       });
     });
 
+    it(`should call setInterval on the edited task`, () => {
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(0);
+      app.find("div.create-task button").simulate('click');
+
+      jest.advanceTimersByTime(1000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(1);
+
+      // Click the "edit" button
+      app.find("div.edit-task button").simulate('click');
+
+      // startOnLoad is set to true, so the task should run straight away
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(8);
+
+      // Then, the task should run on the new 2000ms schedule
+      jest.advanceTimersByTime(2000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(15);
+      jest.advanceTimersByTime(2000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(22);
+    });
+
   });
 
   describe('Task delete', () => {
@@ -129,6 +161,23 @@ describe('Task workflow', () => {
         id
       });
       // expect(tasksList).toStrictEqual({});
+    });
+
+    it(`should cancel the interval on the task`, () => {
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(0);
+      app.find("div.create-task button").simulate('click');
+
+      jest.advanceTimersByTime(1000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(1);
+
+      // Click the "delete" button
+      app.find("div.delete-task button").simulate('click');
+
+      // The task should no longer be running
+      jest.advanceTimersByTime(1000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(1);
+      jest.advanceTimersByTime(1000);
+      expect(app.find(App).find("App").instance().state.testFeedback).toBe(1);
     });
 
   });
