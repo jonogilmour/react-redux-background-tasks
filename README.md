@@ -1,5 +1,7 @@
 # React Redux Background Tasks
 
+[![Build Status](https://travis-ci.com/jonogilmour/react-redux-background-tasks.svg?branch=master)](https://travis-ci.com/jonogilmour/react-redux-background-tasks)
+
 Dispatch and manage interval-based tasks in your React + Redux app.
 
 ## Installation
