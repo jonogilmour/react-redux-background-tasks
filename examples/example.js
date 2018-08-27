@@ -2,12 +2,16 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import TaskRunner from '../components/TaskRunner';
-import TaskContext, { updateTasks, getTasks } from '../context/TaskContext';
-import { TaskCreator } from '../context/TaskCreator';
-import TasksHelper from '../helpers/tasks';
-
-import { createTask, editTask, deleteTask } from '../redux/actions';
+import {
+  createTask,
+  editTask,
+  deleteTask,
+  TaskRunner,
+  TaskContext,
+  updateTasks,
+  getTasks,
+  TaskCreator,
+  TasksHelper } from '../';
 
 class App extends Component {
   constructor(props) {

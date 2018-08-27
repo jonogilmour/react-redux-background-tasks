@@ -1,11 +1,11 @@
 {
   "name": "react-redux-background-tasks",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Create and manage background tasks in React + Redux applications",
   "main": "index.js",
   "scripts": {
     "test": "npx jest --config jest.config.js",
-    "build": "babel . --out-dir commonjs",
+    "build": "babel . --ignore commonjs,jest*.js,node_modules,**/__tests__,**/__mocks__ --out-dir ./commonjs",
     "prepublishOnly": "npm run build"
   },
   "repository": {
