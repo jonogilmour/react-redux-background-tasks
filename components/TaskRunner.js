@@ -1,7 +1,19 @@
+"use strict";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { processCreated, processEdited, processDeleted } from '../redux/actions';
 import PropTypes from 'prop-types';
+import TaskCreator from '../context/TaskCreator';
+
+/*
+ * The main task manager. Keeps track of all running task timers in state.
+ *
+ * This component needs to be placed within your tasks context, preferably
+ * at the root of your app to prevent it being rerendered unnecessarily.
+ *
+ * When a task is added, edited, or deleted, this component manages the
+ * dispatching of interval timers for the task.
+ */
 
 export class TaskRunner extends Component {
   constructor(props) {
@@ -11,6 +23,7 @@ export class TaskRunner extends Component {
     };
   }
 
+  // Dispatches a new task
   startTask(id, info) {
     if(typeof id === 'string' && typeof info === 'object') {
       // Start the callback on an interval
@@ -37,6 +50,7 @@ export class TaskRunner extends Component {
     return false;
   }
 
+  // Deletes an existing task
   killTask(id) {
     if(typeof id === 'string') {
       const { [id]: timer, ...activeTasks } = this.state.activeTasks;
@@ -53,6 +67,8 @@ export class TaskRunner extends Component {
           ...this.state,
           activeTasks
         });
+
+        // TODO: remove the task from the context
       }
 
       return true;
@@ -60,6 +76,7 @@ export class TaskRunner extends Component {
     return false;
   }
 
+  // Edits details of an existing task, restarting it afterwards
   editTask(id, info) {
     if(typeof id === 'string' && typeof info === 'object') {
 
@@ -88,12 +105,14 @@ export class TaskRunner extends Component {
           }
         });
       }
+      // TODO: task doesn't exist, maybe create it instead
 
       return true;
     }
     return false;
   }
 
+  // Component will update when a new, edited, or deleted task is awaiting processing
   componentDidUpdate() {
     const queue = [];
     // Curried function to pass into the promises
@@ -162,4 +181,4 @@ const mapDispatchToProps = (dispatch) => ({
   processDeleted: (id) => dispatch(processDeleted(id))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskRunner);
+export default connect(mapStateToProps, mapDispatchToProps)(TaskCreator(TaskRunner));

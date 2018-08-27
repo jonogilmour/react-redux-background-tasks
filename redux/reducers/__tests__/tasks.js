@@ -1,3 +1,4 @@
+"use strict";
 import tasksReducer from '../tasks';
 
 describe('tasksReducer', () => {

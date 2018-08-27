@@ -1,14 +1,23 @@
+"use strict";
 import deleteTask from '../deleteTask';
+
+const dispatch = jest.fn();
 
 describe('deleteTask', () => {
 
-  it(`should return an action with type 'TASK_DELETED'`, () => {
-    expect(deleteTask().type).toBe('TASK_DELETED');
+  beforeEach(() => {
+    dispatch.mockClear();
   });
 
-  it(`should assign id to the input value`, () => {
-    expect(deleteTask('9999a')).toMatchObject({
-      id: '9999a'
+  it(`should be a thunk`, () => {
+    expect(deleteTask()).toBeInstanceOf(Function);
+  });
+
+  it(`should dispatch an action with type 'TASK_DELETED'`, () => {
+    deleteTask('123')(dispatch);
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'TASK_DELETED',
+      id: '123'
     });
   });
 

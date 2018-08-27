@@ -1,0 +1,45 @@
+{
+  "name": "react-redux-background-tasks",
+  "version": "1.0.0",
+  "description": "Create and manage background tasks in React + Redux applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest --config jest.config.js",
+    "build": "babel . --out-dir commonjs",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonogilmour/react-redux-background-tasks.git"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "task",
+    "manager",
+    "background"
+  ],
+  "author": "Jonathan Gilmour <jonathan.d.gilmour@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/jonogilmour/react-redux-background-tasks/issues"
+  },
+  "homepage": "https://github.com/jonogilmour/react-redux-background-tasks#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "enzyme": "^3.5.0",
+    "enzyme-adapter-react-16": "^1.3.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
+  },
+  "dependencies": {
+    "uuid": "^3.3.2"
+  }
+}

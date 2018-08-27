@@ -1,3 +1,5 @@
+"use strict";
+
 // Tasks
 export { default as createTask } from './background-tasks/createTask';
 export { default as editTask } from './background-tasks/editTask';
