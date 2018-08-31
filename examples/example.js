@@ -19,13 +19,12 @@ class App extends Component {
 
     this.state = {
       tasks: {},
-      tasksContext: {
-        updateTasks: updateTasks.bind(this),
-        getTasks: getTasks.bind(this)
-      },
       myTaskId: false,
       testFeedback: 0
     };
+
+    this.updateTasks = updateTasks.bind(this);
+    this.getTasks = getTasks.bind(this);
 
     this.create = this.create.bind(this);
     this.delete = this.delete.bind(this);
@@ -103,7 +102,10 @@ class App extends Component {
 
   render() {
     return (
-      <TaskContext.Provider value={this.state.tasksContext}>
+      <TaskContext.Provider value={{
+        updateTasks: this.updateTasks,
+        getTasks: this.getTasks
+      }}>
         <TaskRunner getTasks={getTasks} updateTasks={updateTasks}/>
 
         <div className="create-task">

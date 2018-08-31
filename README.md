@@ -20,6 +20,123 @@ This library simplifies that process and allows any Redux-connected component to
 
 Relies on **Redux**, **redux-thunk**, and the **React Context API**, so React v16+ is required.
 
+## Example
+
+Let's say you have a global user token in your Redux store, and it expires every 60 minutes. Obviously we want to renew that in advance, to keep the user session going.
+
+```javascript
+const rootReducer = combineReducers({
+  taskQueues: taskReducer, // See Reducers in Usage
+  userToken: userTokenReducer
+})
+const store = createStore(rootReducer); // Also add in thunk middleware
+
+const App = () =>  (
+  <Provider store={store}>
+    <MyApp/>
+  </Provider>
+);
+```
+
+This sets up the basic starting point of our app, we have the `taskQueues` added to the Redux store, and a user token, maybe with an expiry time attached. Let's create a simple connected component that will log the user in, and dispatch the new refresh task.
+
+```javascript
+class MyApp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loginTaskId: false // This component owns this task, so we store the task id in its state in case we need to cancel it later
+    };
+  }
+
+  loginUser() {
+    const username = 'myUser';
+    const password = 'mysecurepassword';
+
+    const token = LoginHelper.login(username, password); // Your own login method
+
+    // Add the token info to redux store
+    this.props.loginUser(token);
+
+    // Create a new task object
+    const newTask = TasksHelper.newTask(
+      () => LoginHelper.extendSession(token), // Callback
+      60 * 60 * 1000 // 60 minute interval
+    );
+
+    if(newTask) {
+      const {id, ...taskInfo} = newTask; // Pull out the ID and the rest of the info separately
+
+      this.props.updateTasks({
+        ...this.props.getTasks,
+        [id]: taskInfo
+      }); // Set the tasks list in the context, adding our new task in
+
+      // Tell the rest of the app a new task is waiting to be scheduled
+      this.createTask(id);
+
+      // Save the ID in case we want to change or cancel this task later
+      this.setState({
+        loginTaskId: id
+      });
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.loginUser.bind(this)}>Click to login!</button>
+      </div>
+    );
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  loginUser: token => dispatch(loginUser(token)),
+  createTask: id => dispatch(taskCreated(id))
+});
+
+export default connect()(MyComponent);
+```
+
+```javascript
+// Give our component access to the task getter/setter methods
+const MyTaskCreator = TaskCreator(MyComponent);
+class MyApp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: {}, // used to store global
+    };
+
+    // Automatically returns this.state.tasks
+    this.getTasks = getTasks.bind(this);
+    // Updates the contents of this.state.tasks
+    this.updateTasks = updateTasks.bind(this);
+  }
+
+  render() {
+    return (
+      <TaskContext.Provider value={{
+        getTasks: this.getTasks,
+        updateTasks: this.updateTasks
+      }}>
+        <TaskRunner/> // Consumes all changes to the task queues
+        <MyTaskCreator>
+      </TaskContext.Provider>
+    );
+  }
+}
+```
+
+Clicking the login button in our `MyComponent` will:
+- Login to our app, setting the token in the redux store
+- Create a new session extend task, set to run every 60 minutes
+- Save the task under its ID to the TasksContext
+- Dispatch a `taskCreated` action, which lets `TaskRunner` know there's a new task to schedule
+
+Now, every 60 minutes your session token will be extended!
+
 ## Functionality
 
 ### Redux
@@ -68,7 +185,7 @@ class MyApp extends Component {
       tasks: {},
     };
 
-    // Automatically returns this.state.tasks
+    // Returns a copy of this.state.tasks
     this.getTasks = getTasks.bind(this);
     // Updates the contents of this.state.tasks
     this.updateTasks = updateTasks.bind(this);
@@ -76,7 +193,10 @@ class MyApp extends Component {
 
   render() {
     return (
-      <TaskContext.Provider value={this.state.tasks}>
+      <TaskContext.Provider value={{
+        getTasks: this.getTasks,
+        updateTasks: this.updateTasks
+      }}>
         // Your app
       </TaskContext.Provider>
     );
@@ -88,7 +208,7 @@ class MyApp extends Component {
 
 `import { TaskRunner } from 'react-redux-background-tasks'`
 
-Responds to changes in the task queues and dispatches tasks on the given interval. This component must be placed as a child of the `TaskContext` and be given accessor methods to the task state.
+Responds to changes in the task queues and dispatches tasks on the given interval. This component must be placed as a child of the `TaskContext`.
 
 ```javascript
 class MyApp extends Component {
@@ -101,8 +221,11 @@ class MyApp extends Component {
 
   render() {
     return (
-      <TaskContext.Provider value={this.state.tasks}>
-        <TaskRunner getTasks={ () => this.state.tasks } updateTasks={ tasks => this.setState({ tasks }) }/>
+      <TaskContext.Provider value={{
+        getTasks: getTasks.bind(this),
+        updateTasks: updateTasks.bind(this)
+      }}>
+        <TaskRunner/>
         // Your app
       </TaskContext.Provider>
     );
@@ -130,8 +253,11 @@ class MyApp extends Component {
 
   render() {
     return (
-      <TaskContext.Provider value={this.state.tasks}>
-        <MyTaskCreator getTasks={this.getTasks} updateTasks={this.updateTasks}/>
+      <TaskContext.Provider value={{
+        getTasks: this.getTasks,
+        updateTasks: this.updateTasks
+      }}>
+        <MyTaskCreator/>
         // Your app
       </TaskContext.Provider>
     );
@@ -160,8 +286,11 @@ class MyApp extends Component {
 
   render() {
     return (
-      <TaskContext.Provider value={this.state.tasks}>
-        <MyTaskCreator getTasks={this.getTasks} updateTasks={this.updateTasks}/>
+      <TaskContext.Provider value={{
+        getTasks: this.getTasks,
+        updateTasks: this.updateTasks
+      }}>
+        <MyTaskCreator/>
         // Your app
       </TaskContext.Provider>
     );

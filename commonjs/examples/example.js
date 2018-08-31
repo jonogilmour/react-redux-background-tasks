@@ -54,11 +54,6 @@ var App = function (_Component) {
   }
 
   _createClass(App, [{
-    key: 'derp',
-    value: function derp() {
-      return this.state;
-    }
-  }, {
     key: 'create',
     value: function create() {
       var _this2 = this;
