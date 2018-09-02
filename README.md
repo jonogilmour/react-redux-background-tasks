@@ -68,7 +68,7 @@ class MyApp extends Component {
       const {id, ...taskInfo} = newTask; // Pull out the ID and the rest of the info separately
 
       this.props.updateTasks({
-        ...this.props.getTasks,
+        ...this.props.getTasks(),
         [id]: taskInfo
       }); // Set the tasks list in the context, adding our new task in
 
