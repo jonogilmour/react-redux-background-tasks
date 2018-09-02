@@ -96,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
   createTask: id => dispatch(taskCreated(id))
 });
 
-export default connect()(MyComponent);
+export default connect(undefined, mapDispatchToProps)(MyComponent);
 ```
 
 ```javascript
